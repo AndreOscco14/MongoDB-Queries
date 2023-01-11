@@ -236,11 +236,12 @@ $pull --> elimina
 
 
 
-                            ========================================================================================================
-                            |||||||||||||||||||||||||||||||||| AGGREGATE $match $group $sum $avg $multip  ||||||||||||||||||||||||||
-                            =========================================================================================================
+    ========================================================================================================
+     |||||||||||||||||||||||||||||||||| AGGREGATE $match $group $sum $avg $multip  ||||||||||||||||||||||||||
+     =========================================================================================================
 
-
+$aggregate: Crea un conjunto de sentencias
+--------------------------------------------------
 db.getCollection('empleados').find({})
 
 db.empleados.remove({})
@@ -264,7 +265,7 @@ db.empleados.aggregate(
          }
     ]
 )
-
+ 
 -> Siempre van dentro de corchetes
 
 $match --> en esta instruccion se coloca todas las condiciones que quieres que se cumpla (AGRUPA) (CONSIDERE)
@@ -278,6 +279,8 @@ para hacer el agrupamiento ($match)
 --------------------------------------------------------------------------------------
 --- Saber cual es el salario de Mujeres mayores de 20 años de edad según su área ----
 --------------------------------------------------------------------------------------
+Agrupe por el area y sume todos los salarios, pero ahora solo que considere las mujeres y en edad > 20.
+
 
 db.empleados.aggregate(
     [
@@ -291,9 +294,15 @@ db.empleados.aggregate(
          }
     ]
 )
+
+
+
+
 -------------------------------------------------------
 -- Cuanto es lo que se pago a los empleados en Enero --
 -------------------------------------------------------
+
+
 
 db.empleados.aggregate(
     [
@@ -306,22 +315,16 @@ db.empleados.aggregate(
                    salariomensual: { 
                         $sum: {$multiply: ['$salario','$diast']}
                     },
-        } }
+                   diaspromedio: {$avg: '$diast'}, 
+                   numeroempleados: {$sum:1}
+            }
+        }     
     ]
 )
 
 -------------------------------------------------------
 -- $project: solo imprime nombre y salario  --
 -------------------------------------------------------
-
-db.empleados.aggregate([
-         {
-            $project: {
-                nombreempleado: '$nombre',
-                salario: 1
-            }
-          }
-        ])
 
 db.empleados.aggregate([
          {
@@ -407,3 +410,129 @@ db.empleados.aggregate([
 
 LINKS MONGO: https://www.youtube.com/watch?v=XinaNVwid9w&list=PLpk46uAL3qUG3NYfYJkmREZGCX5yM3P7u&index=12 
 LINK MONGO 1:N M:N --> https://www.youtube.com/watch?v=Nsog0pjG-5U
+
+
+
+
+
+
+
+
+========================================================================================================
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+========================================================================================================
+========================================================================================================
+             aggregate con $lookup $replaceRoot, $project $match y $sort
+========================================================================================================
+
+db.grupos.insert({'_id': 1.0, nombreg: 'ITIC81', carrera: 'Ingenieria TIC'})
+db.grupos.insert({'_id': 2.0, nombreg: 'ITIC82', carrera: 'Ingenieria TIC'})
+db.grupos.insert({'_id': 3.0, nombreg: 'RT 51', carrera: 'Redes'})
+
+
+db.alumnos.insert({'_id': 1.0, matricula: '2233225566', nombre: 'Paty', app: 'Lopez', sexo: 'F' , idg:1 , edad: 20})
+db.alumnos.insert({'_id': 2.0, matricula: '2233225345', nombre: 'Joel', app: 'Mendez', sexo: 'M' , idg:1 , edad: 25})
+db.alumnos.insert({'_id': 3.0, matricula: '2233285868', nombre: 'Fernando', app: 'Ramirez', sexo: 'M' , idg:2 , edad: 28})
+db.alumnos.insert({'_id': 4.0, matricula: '2233756765', nombre: 'Laura', app: 'Herrera', sexo: 'F' , idg:2 , edad: 25})
+db.alumnos.insert({'_id': 5.0, matricula: '2234568596', nombre: 'Memo', app: 'Torres', sexo: 'M' , idg:3 , edad: 30})
+db.alumnos.insert({'_id': 6.0, matricula: '2296856777', nombre: 'Karla', app: 'Lopez', sexo: 'F' , idg:3 , edad: 23})
+
+______________________________________________________________________
+                Conexion incluyendo clave foránera
+______________________________________________________________________
+
+db.alumnos.aggregate([
+            {
+                $lookup: {
+                    from: 'grupos', 
+                    localField: 'idg', foreignField: '_id',
+                    as: 'grupos'
+                }
+            }
+])
+
+
+--> Se queda con los alumnos Masculinos
+db.alumnos.aggregate([
+            {
+                $lookup: {
+                    from: 'grupos', 
+                    localField: 'idg', foreignField: '_id',
+                    as: 'grupos'
+                }
+            },
+            { $match: { sexo: 'M'}}
+])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
