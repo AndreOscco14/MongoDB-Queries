@@ -465,10 +465,43 @@ db.alumnos.aggregate([
 ])
 
 
+$project --> Solo nos permite visualizar los campos que solicitamos
+db.alumnos.aggregate([
+            {
+                $lookup: {
+                    from: 'grupos', 
+                    localField: 'idg', foreignField: '_id',
+                    as: 'grupos'
+                }
+            },
+            { 
+               $match: { sexo: 'M', 'grupos.carrera': 'Ingenieria TIC'}
+            },
+            {
+                $project: {
+                        _id:0,
+                        matricula: 1,
+                        nombre: 1,
+                        sexo: 1,
+                        carrera: '$grupos.carrera'
+              }
+        }
+])
 
-
-
-
+__________________________________________________________________________________
+Mete datos de la colleccion Grupos al de Alumnos (Lo pone de Raiz)
+db.alumnos.aggregate([
+            {
+                $lookup: {
+                    from: 'grupos', 
+                    localField: 'idg', foreignField: '_id',
+                    as: 'grupos'
+                }
+            },
+          {
+              $replaceRoot: {newRoot: {$mergeObjects: [{$arrayElemAt: ['$grupos', 0]}, "$$ROOT"]}}
+          }
+])
 
 
 
