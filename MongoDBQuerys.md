@@ -276,6 +276,7 @@ $group -->  indicar que campos va agrupar y cuales generará y cuales son las co
 para hacer el agrupamiento ($match)
  
 
+
 --------------------------------------------------------------------------------------
 --- Saber cual es el salario de Mujeres mayores de 20 años de edad según su área ----
 --------------------------------------------------------------------------------------
@@ -504,13 +505,99 @@ db.alumnos.aggregate([
 ])
 
 
+========================================================================================================
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+========================================================================================================
+
+sync function filterCodePromotions(req, res){
+    try {
+        const resp = await querysService.filterCodePromotions(page)
+        return response(res, Status.OK, resp)
+    } catch (error) {
+        return response(res, Status.INTERNAL_SERVER_ERROR)
+    }
+}
+----------------------------------------------------------------------------------------------------------
 
 
 
+async function usersMvp(req, res){
+    try{
+        let from = {
+            year: req.query.fyear || null,
+            day: req.query.fday || null,
+            month: req.query.fmonth || null
+        }
+        let to = {
+            year: req.query.tyear || null,
+            day: req.query.tday || null,
+            month: req.query.tmonth || null
+        }
+
+         let page = (req.query.page || 1) == 0 ? 1 : req.query.page;
+       
+        const resp = await querysService.usersMvp(from,to, page)
+
+        return response(res, Status.OK, resp)
+    } catch (error) {
+        logger.error({ruta: 'querys.controller.js => usersMvp()', message: error.message})
+        return response(res, Status.INTERNAL_SERVER_ERROR)
+    } 
+}
+
+
+async function getChooseMvp(req, res) {
+    try {
+        let from = {
+            year: req.query.fyear || null,
+            day: req.query.fday || null,
+            month: req.query.fmonth || null
+        }
+
+        let to = {
+            year: req.query.tyear || null,
+            day: req.query.tday || null,
+            month: req.query.tmonth || null
+        }
+
+        let page = (req.query.page || 1) == 0 ? 1 : req.query.page;
+
+        const resp = await querysService.getChooseMvp(from,to, page)
+
+        return response(res, Status.OK, resp)
+    }catch(error) {
+        logger.error({ruta: 'querys.controller.js => getChooseMvp()', message: error.message})
+        return response(res, Status.INTERNAL_SERVER_ERROR)
+    }
+}
 
 
 
+async function getTotalNominados(req, res){
+    try{
+        const resp = await querysService.getTotalNominados()
+        return response(res, Status.OK, resp)
+    } catch (error) {
+        logger.error({ruta: 'querys.controller.js => getTotalNominados()', message: error.message})
+        return response(res, Status.INTERNAL_SERVER_ERROR)
+    } 
+}
 
+async function getTotalMvp(req, res){
+    try{
+        const resp = await querysService.getTotalMvp()
+        return response(res, Status.OK,resp)
+    }catch(error){
+        return response(res, Status.INTERNAL_SERVER_ERROR)
+    }
+}
+
+
+module ezports:
+    usersMvp,
+    getChooseMvp,
+    getTotalNominados,
+    getTotalMvp
 
 
 
