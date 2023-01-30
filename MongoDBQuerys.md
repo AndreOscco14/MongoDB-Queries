@@ -600,10 +600,69 @@ module ezports:
     getTotalMvp
 
 
+========================================================================================================
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+========================================================================================================
 
+async function getChooseMvp(from, to){
+    let fromDateNominado = moment([from.year, from.month - 1, from.day]);
+    let toDateNominado = moment([to.year, to.month - 1, to.day]);
 
+//----------------------------------------------------------------------------------------------------
+    // return await matchesModel.find(
+    // {
+    //       $and: [
+    //          { _userMvp: {$ne: null }} ,
+    //          { date: { $gte: fromDateNominado}},
+    //          { date: { $lte: toDateNominado}},
+    //         ]
+    // })
+    // .populate( {path:'_userMvp', select: 'firstName lastName pictureUrl'})
+    // .limit(10000)
+    // .exec()
+//----------------------------------------------------------------------------------------------------
+        // let usersMvp = await usersModel.aggregate([
+        //     {
+        //         $group: {
+        //             _id: "$_matchesMvp",
+        //             RESULT: {
+        //                 $sum: {
+        //                     $cond: [
+        //                         {
+        //                             $and: [ 
+        //                                 // { _userMvp: {$ne: null }},
+        //                                 { $gte: [ "$createdAt", new Date(fromDateNominado)]},
+        //                                 { $lte: [ "$createdAt", new Date(toDateNominado)]}
+        //                             ]
+        //                         },
+        //                        1,
+        //                      0 
+        //                     ]
+        //                 }
+        //             }
+        //         }
+        //     },
+        //     {
+        //         $lookup: { from: 'matches', localField: '_id', foreignField: '_id', as: 'users_info'}
+        //     },
+        //     {
+        //         $unwind: "$users_info"
+        //     },
+        //     {
+        //         $project: {
+        //             NameMatch: "$users_info.name",
+        //             Fecha: "$users_info.Date",
+        //             pictureUrl: "$users_info.pictureUrl"
+        //         }
+        //     },
+        //     {
+        //         $sort: {"RESULT" : -1}
+        //     }
+        // ]).exec()
 
-
+        // console.log(usersMvp);
+        // return usersMvp;
+//----------------------------------------------------------------------------------------------------
 
 
 
