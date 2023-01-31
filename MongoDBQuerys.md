@@ -663,9 +663,60 @@ async function getChooseMvp(from, to){
         // console.log(usersMvp);
         // return usersMvp;
 //----------------------------------------------------------------------------------------------------
+    // return await matchesModel.find(
+    // {
+    //       $and: [
+    //          { _userMvp: {$ne: null }} ,
+    //          { date: { $gte: fromDateNominado}},
+    //          { date: { $lte: toDateNominado}},
+    //         ]
+    // })
+    // .populate( {path:'_userMvp', select: 'firstName lastName pictureUrl'})
+    // .limit(10000)
+    // .exec()
+//--------------------------------------------------------------------------------------------------------------------------------------------------
 
+async function getTotalNominados(){
+    try {
+        // let totalNominatedUsers = await assessmentModel.count({ nominacionMVP: true }).exec();
+        // return totalNominatedUsers;
 
+        let usersMVP = await matchesModel.aggregate([
+            {
+              $group: {
+                _id: "$_userMvp",
+                totalNominated: { $sum: 1 }
+              }
+            },
+            {
+              $sort: { totalNominated: -1 }
+            }
+          ]);
+          
+          let usersMVPIds = usersMVP.map(value => mongoose.Types.ObjectId(value._id));
+          let usersMVPFind = await usersModel.find({ _id: usersMVPIds, role: 'user' }).select('firstName lastName pictureUrl').exec();
+          
+          let usersMVPMap = usersMVPFind.map(value1 => {
+            let filterUserMVP = usersMVP.find(value2 => JSON.stringify(value1._id) === JSON.stringify(value2._id));
+            return {
+              ...value1.toJSON(),
+              numberNominated: filterUserMVP.totalNominated
+            };
+          });
+          
+          let MVPs = usersMVPMap.sort((a, b) => b.numberNominated - a.numberNominated);
+          
+          let result = {
+            MVPs: MVPs,
+            totalNominated: MVPs.length
+          };
+          
+          return result;
 
+    } catch (error) {
+        return Promise.reject(error)
+    }
+}
 
 
 
